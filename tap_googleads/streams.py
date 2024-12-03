@@ -463,3 +463,22 @@ class GeoPerformance(ReportsStream):
     ]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "geo_performance.json"
+
+
+class AdPerformance(GoogleAdsStream):
+    """AdPerformance stream class."""
+
+    records_jsonpath = "$.results[*]"
+    name = "stream_adperformance"
+    primary_keys = ["customer__id","campaign__id", "adGroup__id", "ad__id"]
+    replication_key = None
+    schema_filepath = SCHEMAS_DIR / "ad_performance.json"
+
+    @property
+    def gaql(self):
+        return f"""
+        SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id, metrics.ctr, metrics.cost_micros, metrics.clicks,metrics.impressions, ad_group_ad.ad.name, ad_group_ad.ad.id 
+        FROM ad_group_ad
+               WHERE segments.date >= {self.start_date} and segments.date <= {self.end_date}
+        """
+

@@ -470,14 +470,14 @@ class AdPerformance(GoogleAdsStream):
 
     records_jsonpath = "$.results[*]"
     name = "stream_adperformance"
-    primary_keys = ["customer__id","campaign__id", "adGroup__id", "ad__id"]
+    primary_keys = ["customer_id","campaign__id", "adGroup__id", "ad__id"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "ad_performance.json"
 
     @property
     def gaql(self):
         return f"""
-        SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id, metrics.ctr, metrics.cost_micros, metrics.clicks,metrics.impressions, ad_group_ad.ad.name, ad_group_ad.ad.id 
+        SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id, metrics.ctr, metrics.cost_micros, metrics.clicks,metrics.impressions, ad_group_ad.ad.name, ad_group_ad.ad.id, segments.date 
         FROM ad_group_ad
                WHERE segments.date >= {self.start_date} and segments.date <= {self.end_date}
         """

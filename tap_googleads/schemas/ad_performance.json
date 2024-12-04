@@ -54,6 +54,18 @@
                 },
                 "impressions": {
                     "type": "string"
+                },
+                "average_cpc": {
+                    "type": "number"
+                },
+                "average_cpm": {
+                    "type": "number"
+                },
+                "interactions": {
+                    "type": "string"
+                },
+                "interaction_rate": {
+                    "type": "number"
                 }
             }
         },

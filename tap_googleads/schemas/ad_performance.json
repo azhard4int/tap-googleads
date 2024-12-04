@@ -26,14 +26,16 @@
                 }
             }
         },
-        "adGroupAd__ad": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
+        "adGroupAd": {
+            "ad": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -52,6 +54,14 @@
                 "impressions": {
                     "type": "string"
                 }    
+            }
+        },
+        "segments": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                }
             }
         }
     }

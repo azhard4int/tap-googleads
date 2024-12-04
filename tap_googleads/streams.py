@@ -470,7 +470,7 @@ class AdPerformance(GoogleAdsStream):
 
     records_jsonpath = "$.results[*]"
     name = "stream_adperformance"
-    primary_keys = ["customer_id","campaign__id", "adGroup__id", "adGroupAd__ad__id", "segments__date"]
+    primary_keys = ["customer.id", "campaign.id", "adGroup.id", "adGroupAd.ad.id", "segments.date"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "ad_performance.json"
 
@@ -481,4 +481,3 @@ class AdPerformance(GoogleAdsStream):
         FROM ad_group_ad
                WHERE segments.date >= {self.start_date} and segments.date <= {self.end_date}
         """
-

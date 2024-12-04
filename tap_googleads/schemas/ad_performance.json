@@ -1,12 +1,23 @@
 {
     "type": "object",
     "properties": {
-        "customer_id": {
-            "type": "string"
+        "customer": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
         },
         "campaign": {
             "type": "object",
             "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -18,24 +29,14 @@
         "adGroup": {
             "type": "object",
             "properties": {
-                "name": {
+                "resourceName": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
-                }
-            }
-        },
-        "adGroupAd": {
-            "ad": {
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    }
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
@@ -53,7 +54,29 @@
                 },
                 "impressions": {
                     "type": "string"
-                }    
+                }
+            }
+        },
+        "adGroupAd": {
+            "type": "object",
+            "properties": {
+                "resourceName": {
+                    "type": "string"
+                },
+                "ad": {
+                    "type": "object",
+                    "properties": {
+                        "resourceName": {
+                            "type": "string"
+                        },
+                        "id": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         },
         "segments": {

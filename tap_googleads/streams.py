@@ -470,7 +470,7 @@ class AdPerformance(GoogleAdsStream):
 
     records_jsonpath = "$.results[*]"
     name = "stream_adperformance"
-    primary_keys = ["customer.id", "campaign.id", "adGroup.id", "adGroupAd.ad.id", "segments.date"]
+    primary_keys = ["customer__id", "campaign__id", "adGroup__id", "adGroupAd__ad__id", "segments__date"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "ad_performance.json"
 

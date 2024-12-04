@@ -23,9 +23,6 @@
         "adGroup": {
             "type": "object",
             "properties": {
-                "resourceName": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 },

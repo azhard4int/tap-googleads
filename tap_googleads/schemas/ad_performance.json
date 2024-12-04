@@ -4,9 +4,6 @@
         "customer": {
             "type": "object",
             "properties": {
-                "resourceName": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "string"
                 }
@@ -15,9 +12,6 @@
         "campaign": {
             "type": "object",
             "properties": {
-                "resourceName": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
@@ -72,15 +66,9 @@
         "adGroupAd": {
             "type": "object",
             "properties": {
-                "resourceName": {
-                    "type": "string"
-                },
                 "ad": {
                     "type": "object",
                     "properties": {
-                        "resourceName": {
-                            "type": "string"
-                        },
                         "id": {
                             "type": "string"
                         },

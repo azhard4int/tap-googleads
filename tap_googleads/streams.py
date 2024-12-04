@@ -477,7 +477,8 @@ class AdPerformance(ReportsStream):
     @property
     def gaql(self):
         return f"""
-SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id, metrics.ctr, metrics.cost_micros, metrics.clicks,metrics.impressions, ad_group_ad.ad.name, ad_group_ad.ad.id, segments.date ,
+SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id,ad_group_ad.ad.id, ad_group_ad.ad.name,  segments.date,
+ metrics.ctr, metrics.cost_micros, metrics.clicks, metrics.impressions, metrics.average_cpc, metrics.average_cpm, metrics.reach,
   ad_group_ad.ad.type,
   ad_group_ad.ad.expanded_text_ad.headline_part1,
   ad_group_ad.ad.expanded_text_ad.headline_part2,

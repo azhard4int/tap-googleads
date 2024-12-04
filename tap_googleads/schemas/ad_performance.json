@@ -74,6 +74,18 @@
                         },
                         "name": {
                             "type": "string"
+                        },
+                        "headlines": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "descriptions": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     }
                 }

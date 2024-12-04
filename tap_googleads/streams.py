@@ -477,7 +477,32 @@ class AdPerformance(ReportsStream):
     @property
     def gaql(self):
         return f"""
-        SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id, metrics.ctr, metrics.cost_micros, metrics.clicks,metrics.impressions, ad_group_ad.ad.name, ad_group_ad.ad.id, segments.date 
-        FROM ad_group_ad
-               WHERE segments.date >= {self.start_date} and segments.date <= {self.end_date}
+SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id, metrics.ctr, metrics.cost_micros, metrics.clicks,metrics.impressions, ad_group_ad.ad.name, ad_group_ad.ad.id, segments.date ,
+  ad_group_ad.ad.type,
+  ad_group_ad.ad.expanded_text_ad.headline_part1,
+  ad_group_ad.ad.expanded_text_ad.headline_part2,
+  ad_group_ad.ad.expanded_text_ad.description,
+  ad_group_ad.ad.responsive_search_ad.headlines,
+  ad_group_ad.ad.final_urls,
+  ad_group_ad.ad.responsive_search_ad.descriptions,
+   ad_group_ad.ad.responsive_display_ad.long_headline
+FROM ad_group_ad
+WHERE segments.date >= {self.start_date} and segments.date <= {self.end_date}
         """
+
+    def post_process(self, row: dict, context: dict | None = None) -> dict | None:
+        """Post process the record."""
+        if row.get("adGroupAd", {}).get("ad", {}).get("responsiveSearchAd"):
+            ad = row["adGroupAd"]["ad"]
+            # Extract headlines text
+            headlines = ad["responsiveSearchAd"].get("headlines", [])
+            ad["headlines"] = [h["text"] for h in headlines if "text" in h]
+            
+            # Extract descriptions text
+            descriptions = ad["responsiveSearchAd"].get("descriptions", [])
+            ad["descriptions"] = [d["text"] for d in descriptions if "text" in d]
+            
+            # Remove the original responsiveSearchAd structure
+            del ad["responsiveSearchAd"]
+            
+        return row

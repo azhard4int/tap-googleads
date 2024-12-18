@@ -93,6 +93,24 @@ class GoogleAdsStream(RESTStream):
             params["order_by"] = self.replication_key
         return params
 
+    def get_starting_replication_key_value(
+        self,
+        context: Optional[dict],
+    ) -> Any:
+        """Get starting replication key value.
+
+        Args:
+            context: Stream partition or context dictionary.
+
+        Returns:
+            Starting replication value.
+        """
+        if self.replication_key and self.state:
+            # Return the bookmark value, if available
+            return self.state.get("replication_key_value", self.config["start_date"])
+        # Return the default start_date from config
+        return self.config["start_date"]
+    
     def get_records(self, context):
         try:
             yield from super().get_records(context)

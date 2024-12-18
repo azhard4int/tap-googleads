@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable
 
 from singer_sdk import typing as th  # JSON Schema typing helpers
+from singer_sdk.streams.core import REPLICATION_INCREMENTAL
 
 from tap_googleads.client import GoogleAdsStream, ResumableAPIError
 
@@ -471,8 +472,31 @@ class AdPerformance(ReportsStream):
     records_jsonpath = "$.results[*]"
     name = "stream_adperformance"
     primary_keys = ["customer__id", "campaign__id", "adGroup__id", "adGroupAd__ad__id", "segments__date"]
-    replication_key = None
+    replication_method = REPLICATION_INCREMENTAL
+    replication_key = "segments__date"
     schema_filepath = SCHEMAS_DIR / "ad_performance.json"
+
+    def get_records(self, context: Context) -> Iterable[Dict[str, Any]]:
+        """Return a generator of record-type dictionary objects.
+
+        Args:
+            context: Stream partition or context dictionary.
+
+        Yields:
+            One item per (possibly processed) record in the API.
+        """
+        start_date = self.get_starting_replication_key_value(context)
+        if start_date:
+            self.start_date = f"'{start_date}'"  # Override the cached_property value
+        
+        for record in super().get_records(context):
+            if record.get("segments", {}).get("date"):
+                # Update bookmark value as records are yielded
+                self._increment_stream_state(
+                    {"segments__date": record["segments"]["date"]},
+                    context=context
+                )
+            yield record
 
     @property
     def gaql(self):
@@ -489,6 +513,7 @@ SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id, ad_g
   ad_group_ad.ad.responsive_display_ad.long_headline
 FROM ad_group_ad
 WHERE segments.date >= {self.start_date} and segments.date <= {self.end_date}
+ORDER BY segments.date ASC
         """
 
     def post_process(self, row: dict, context: dict | None = None) -> dict | None:

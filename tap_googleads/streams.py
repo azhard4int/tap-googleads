@@ -471,11 +471,12 @@ class AdPerformance(ReportsStream):
     records_jsonpath = "$.results[*]"
     name = "stream_adperformance"
     primary_keys = ["customer__id", "campaign__id", "adGroup__id", "adGroupAd__ad__id", "segments__date"]
-    replication_key = None
+    replication_key = "segments__date"
     schema_filepath = SCHEMAS_DIR / "ad_performance.json"
 
     @property
     def gaql(self):
+        start_value = self.get_starting_replication_key_value(self.context) or self.config["start_date"]
         return f"""
 SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id, ad_group_ad.ad.id, ad_group_ad.ad.name, segments.date,
   metrics.ctr, metrics.cost_micros, metrics.clicks, metrics.impressions, metrics.average_cpc, metrics.average_cpm, metrics.interactions, metrics.interaction_rate,
@@ -488,7 +489,8 @@ SELECT ad_group.id, ad_group.name, campaign.id, campaign.name, customer.id, ad_g
   ad_group_ad.ad.responsive_search_ad.descriptions,
   ad_group_ad.ad.responsive_display_ad.long_headline
 FROM ad_group_ad
-WHERE segments.date >= {self.start_date} and segments.date <= {self.end_date}
+WHERE segments.date >= {start_value} and segments.date <= {self.config["end_date"]}
+ORDER BY segments.date ASC
         """
 
     def post_process(self, row: dict, context: dict | None = None) -> dict | None:
@@ -505,5 +507,15 @@ WHERE segments.date >= {self.start_date} and segments.date <= {self.end_date}
             
             # Remove the original responsiveSearchAd structure
             del ad["responsiveSearchAd"]
-            
+
         return row
+
+    def process_record(self, record: dict, context: dict | None = None) -> None:
+        """Process a single record, increment state, and write it."""
+        super().process_record(record, context)
+
+        # Update the state bookmark with the latest segments__date processed
+        current_date = record.get("segments__date")
+        if current_date:
+            # This ensures that we save the highest date we've encountered so far.
+            self._increment_stream_state({self.replication_key: current_date}, context=context)
